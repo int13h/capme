@@ -20,6 +20,31 @@ $ts	= h2s($d[6]);
 $usr	= h2s($d[7]);
 $pwd	= h2s($d[8]);
 
+// Find appropriate sensor
+if ($sid == "00") {
+
+    $query = "SELECT s2.sid, s2.hostname
+              FROM sancp
+              LEFT JOIN sensor ON sancp.sid = sensor.sid
+              LEFT JOIN sensor AS s2 ON sensor.hostname = s2.hostname
+              WHERE sancp.start_time > '$ts' - INTERVAL 5 MINUTE
+              AND (src_ip = INET_ATON('$sip') AND src_port = $spt
+              AND dst_ip = INET_ATON('$dip') AND dst_port = $dpt)
+              AND s2.agent_type = 'pcap' LIMIT 1";
+
+    $response = mysql_query($query);
+
+    if (!$response || mysql_num_rows($response) == 0) {
+        $result = array("tx"  => "",
+                        "dbg" => "",
+                        "cmd" => "");
+    } else {
+        $row = mysql_fetch_assoc($response);
+        $sensor = $row["hostname"]; 
+        $sid    = $row["sid"];
+    }
+}
+
 $cmd = "cliscript.tcl -sensor '$sensor' -timestamp '$ts' -u '$usr' -pw '$pwd' -sid $sid -sip $sip -spt $spt -dip $dip -dpt $dpt";
 exec("../.scripts/$cmd",$raw);
 

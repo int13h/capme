@@ -41,7 +41,7 @@ $(document).ready(function(){
     numArgs = $("#numargs").val();
 
     if (numArgs == 7) {
-        reqCap("post");
+        reqCap("posted");
     }
 
     $(".capme_submit").click(function() {
@@ -52,8 +52,15 @@ $(document).ready(function(){
        
         theMsg("Sending request..");
 
-        sensor  = s2h($("#capme_sid option:selected").data('sensorname'));
-        sid     = s2h($("#capme_sid").val());
+        switch (caller) {
+            case "posted": sensor  = s2h("00");
+                           sid     = s2h("00");
+                           break;
+            case "submit": sensor  = s2h($("#capme_sid option:selected").data('sensorname'));
+                           sid     = s2h($("#capme_sid").val());
+                           break;
+        }
+
         sip     = s2h($("#sip").val());
         spt     = s2h($("#spt").val());
         dip     = s2h($("#dip").val());
