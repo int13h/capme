@@ -64,14 +64,9 @@ $(document).ready(function(){
 
         var urArgs = "d=" + sensor + "-" + sid + "-" + sip + "-" + spt + "-" + dip + "-" + dpt + "-" + ts + "-" + usr + "-" + pwd;
 
-        if (urArgs.indexOf("--") != -1) {         
-            $(".capme_msg").text("Please complete all form fields");
-            $(".capme_msg").fadeIn('slow', function() {
-                setTimeout(function(){
-                    $(".capme_msg").fadeOut('slow', function() {
-                    });
-                }, 2000);
-            });
+        if (urArgs.indexOf("--") != -1) {
+     
+            theMsg("Please complete all form fields");
 
         } else { 
 

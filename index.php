@@ -64,7 +64,7 @@ capME!
 <tr>
 <td class=capme_left>Timestamp:</td>
 <td class=capme_right><input type=text maxlength=19 id=timestamp class=capme_selb value="<?php echo $ts;?>" />
-<span class=capme_ex>ex: 2012-10-24.01:02:03</span>
+<span class=capme_ex>ex: 2012-10-24 01:02:03</span>
 </td>
 </tr>
 
