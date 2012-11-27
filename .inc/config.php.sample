@@ -1,0 +1,7 @@
+<?php
+// DB Info.
+$dbHost = '127.0.0.1';
+$dbName = 'sguildb';
+$dbUser = 'readonly';
+$dbPass = 'readonly';
+?>
