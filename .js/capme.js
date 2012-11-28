@@ -50,6 +50,8 @@ $(document).ready(function(){
 
     function reqCap(caller) {
        
+        // Wait until we return before calling again
+
         theMsg("Sending request..");
 
         switch (caller) {
@@ -80,8 +82,7 @@ $(document).ready(function(){
             $(function(){
                 $.get(".inc/callback.php?" + urArgs, function(data){cbtx(data)});
             });
-            
-            
+                        
             function cbtx(data){
                 eval("txRaw=" + data);
                 txCMD    = txRaw.cmd;

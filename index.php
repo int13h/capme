@@ -2,15 +2,25 @@
 include '.inc/config.php';
 include '.inc/functions.php';
 $s = 0;
-if (!isset($_REQUEST['sensor'])) { $sensor = ''; } else { $sensor = $_REQUEST['sensor']; $s++; }
-if (!isset($_REQUEST['sid']))    { $sid    = ''; } else { $sid    = $_REQUEST['sid'];    $s++; }
-if (!isset($_REQUEST['sip']))    { $sip    = ''; } else { $sip    = $_REQUEST['sip'];    $s++; }
-if (!isset($_REQUEST['spt']))    { $spt    = ''; } else { $spt    = $_REQUEST['spt'];    $s++; }
-if (!isset($_REQUEST['dip']))    { $dip    = ''; } else { $dip    = $_REQUEST['dip'];    $s++; }
-if (!isset($_REQUEST['dpt']))    { $dpt    = ''; } else { $dpt    = $_REQUEST['dpt'];    $s++; }
-if (!isset($_REQUEST['ts']))     { $ts     = ''; } else { $ts     = $_REQUEST['ts'];     $s++; }
-if (!isset($_REQUEST['usr']))    { $usr    = ''; } else { $usr    = $_REQUEST['usr'];    $s++; }
-if (!isset($_REQUEST['pwd']))    { $pwd    = ''; } else { $pwd    = $_REQUEST['pwd'];    $s++; }
+if (!isset($_REQUEST['sensor']))   { $sensor = ''; } else { $sensor = $_REQUEST['sensor'];   $s++; }
+if (!isset($_REQUEST['sid']))      { $sid    = ''; } else { $sid    = $_REQUEST['sid'];      $s++; }
+if (!isset($_REQUEST['sip']))      { $sip    = ''; } else { $sip    = $_REQUEST['sip'];      $s++; }
+if (!isset($_REQUEST['spt']))      { $spt    = ''; } else { $spt    = $_REQUEST['spt'];      $s++; }
+if (!isset($_REQUEST['dip']))      { $dip    = ''; } else { $dip    = $_REQUEST['dip'];      $s++; }
+if (!isset($_REQUEST['dpt']))      { $dpt    = ''; } else { $dpt    = $_REQUEST['dpt'];      $s++; }
+if (!isset($_REQUEST['ts']))       { $ts     = ''; } else { $ts     = $_REQUEST['ts'];       $s++; }
+
+if (!isset($_REQUEST['stime'])) { 
+    $stime = '';
+} else {
+    $stime = $_REQUEST['stime'] + 1800;
+    $ts = date("Y-m-d H:i:s", "$stime");
+    $s++;
+}
+
+if (!isset($_REQUEST['user']))     { $usr    = ''; } else { $usr    = $_REQUEST['user'];     $s++; }
+if (!isset($_REQUEST['password'])) { $pwd    = ''; } else { $pwd    = $_REQUEST['password']; $s++; }
+
 ?>
 
 <html>

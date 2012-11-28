@@ -187,3 +187,25 @@ span.capme_close:hover {
 .capme_result {
   display: none;
 }
+
+.txtext_hdr {
+  width: inherit;
+  background: #00ffff;
+  padding: none;
+  float: left;
+}
+
+.txtext_src {
+  color: #ff0000;
+}
+
+.txtext_dst {
+  color: #0000ff;
+}
+
+.txtext_dbg {
+  width: inherit;
+  background: #add8e6;
+  padding: none;
+  float: left;
+}

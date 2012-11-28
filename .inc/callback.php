@@ -56,16 +56,18 @@ foreach ($raw as $line) {
     $type = substr($line, 0,3);
 
     switch ($type) {
-        case "DEB": $debug .= $line . "<br>"; $line = ''; break;
-        case "HDR": $line = preg_replace('/^HDR:/', "<span class=txtext_hdr>$0</span>", $line); break;
-        case "DST": $line = preg_replace('/^DST:/', "<span class=txtext_dst>$0</span>", $line); break;
-        case "SRC": $line = preg_replace('/^SRC:/', "<span class=txtext_src>$0</span>", $line); break;
+        case "DEB": $debug .= preg_replace('/^DEBUG:.*$/', "<span class=txtext_dbg>$0</span>", $line) . "<br>"; $line = ''; break;
+        case "HDR": $line = preg_replace('/(^HDR:)(.*$)/', "<span class=txtext_hdr>$2</span>", $line); break;
+        case "DST": $line = preg_replace('/^DST:.*$/', "<span class=txtext_dst>$0</span>", $line); break;
+        case "SRC": $line = preg_replace('/^SRC:.*$/', "<span class=txtext_src>$0</span>", $line); break;       
     }
 
     if (strlen($line) > 0) {
         $fmtd  .= $line . "<br>";
     }
 }
+
+$fmtd  .= "<br>" . $debug;
 
 $result = array("tx"  => "$fmtd",
                 "dbg" => "$debug",
