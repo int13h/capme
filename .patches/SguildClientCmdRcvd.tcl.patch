@@ -1,0 +1,11 @@
+--- SguildClientCmdRcvd.tcl	2011-06-08 08:43:39.000000000 -0300
++++ SguildClientCmdRcvd.tcl.n	2012-08-16 17:46:30.000000000 -0300
+@@ -119,6 +119,8 @@
+  
+       ChangePass          { $clientCmd $socketID [lindex $data 1] [lindex $data 2] [lindex $data 3] }
+ 
++      CliScript           { $clientCmd $socketID [lindex $data 1] }
++
+       default { InfoMessage "Unrecognized command from $socketID: $data" }
+ 
+     }
