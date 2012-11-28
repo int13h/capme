@@ -8,6 +8,7 @@ Easy bake oven for sguil transcripts
 * a web front end that will let you:
        
 1) Fill in form fields and click a button to get a transcript or,
+
 2) Automagically populate and submit the form by supplying the fields in the URI:
       
 `https://host.ca/capme/index.php?sip=10.10.10.1&spt=4242&dip=10.10.10.2&dpt=80&ts=2012-11-27%2005:34:00&usr=paulh&pwd=aBcDeF`
