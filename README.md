@@ -14,3 +14,5 @@ Easy bake oven for sguil transcripts
 `https://host.ca/capme/index.php?sip=10.10.10.1&spt=4242&dip=10.10.10.2&dpt=80&ts=2012-11-27%2005:34:00&usr=paulh&pwd=aBcDeF`
  
 If no sid is supplied the script takes a peek in the sancp table to find an appropriate one.  
+
+Note: 2 sguild libs need minor patches for this to work. Take a peek in the .patches folder
