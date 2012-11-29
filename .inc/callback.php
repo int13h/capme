@@ -28,8 +28,7 @@ if ($sid == "00") {
               LEFT JOIN sensor ON sancp.sid = sensor.sid
               LEFT JOIN sensor AS s2 ON sensor.hostname = s2.hostname
               WHERE sancp.start_time > '$ts' - INTERVAL 5 MINUTE
-              AND (src_ip = INET_ATON('$sip') AND src_port = $spt
-              AND dst_ip = INET_ATON('$dip') AND dst_port = $dpt)
+              AND ((src_ip = INET_ATON('$sip') AND src_port = $spt AND dst_ip = INET_ATON('$dip') AND dst_port = $dpt) OR (src_ip = INET_ATON('$dip') AND src_port = $dpt AND dst_ip = INET_ATON('$sip') AND dst_port = $spt))
               AND s2.agent_type = 'pcap' LIMIT 1";
 
     $response = mysql_query($query);
