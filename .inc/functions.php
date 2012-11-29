@@ -29,7 +29,7 @@ function mkSensor($active) {
 
         $selected = '';
 
-        if ($id == $active) {
+        if ($si == $active) {
             $selected="selected=\"yes\"";
         }
 

@@ -2,8 +2,9 @@
 include '.inc/config.php';
 include '.inc/functions.php';
 $s = 0;
+$t = 0;
 if (!isset($_REQUEST['sensor']))   { $sensor = ''; } else { $sensor = $_REQUEST['sensor'];   $s++; }
-if (!isset($_REQUEST['sid']))      { $sid    = ''; } else { $sid    = $_REQUEST['sid'];      $s++; }
+if (!isset($_REQUEST['sid']))      { $sid    = ''; } else { $sid    = $_REQUEST['sid'];      $t++; }
 if (!isset($_REQUEST['sip']))      { $sip    = ''; } else { $sip    = $_REQUEST['sip'];      $s++; }
 if (!isset($_REQUEST['spt']))      { $spt    = ''; } else { $spt    = $_REQUEST['spt'];      $s++; }
 if (!isset($_REQUEST['dip']))      { $dip    = ''; } else { $dip    = $_REQUEST['dip'];      $s++; }
@@ -47,10 +48,7 @@ capME!
 <td class=capme_left>Sensor:</td>
 <td>
 <SELECT id=capme_sid class=capme_select>
-<?php
-    if(!isset($_REQUEST['qSID'])) { $qSID = 1024; } else { $qSID = $_REQUEST['qSID']; }
-    mkSensor($qSID);
-?>
+<?php mkSensor($sid);?>
 </SELECT>
 </td>
 </tr>
@@ -100,7 +98,7 @@ capME!
 <td colspan=2 class=capme_buttons>
 <input class=capme_reset type=reset value=reset>
 <input class=capme_submit type=button value=submit>
-<input id=numargs type=hidden value="<?php echo $s;?>" />
+<input id=formargs type=hidden value="<?php echo $s . "||" . $t;?>" />
 </td>
 </tr>
 </form>
