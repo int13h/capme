@@ -1,5 +1,4 @@
 <?php
-include '.inc/config.php';
 include '.inc/functions.php';
 $s = 0;
 $t = 0;

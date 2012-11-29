@@ -1,5 +1,10 @@
 <?php
 
+include_once 'config.php';
+global $dbHost,$dbName,$dbUser,$dbPass;
+$db = mysql_connect($dbHost,$dbUser,$dbPass) or die(mysql_error());
+mysql_select_db($dbName,$db) or die();
+
 function h2s($x) {
   $s='';
   foreach(explode("\n",trim(chunk_split($x,2))) as $h) $s.=chr(hexdec($h));
@@ -14,9 +19,6 @@ function s2h($x) {
 
 // Sensor list
 function mkSensor($active) {
-    global $dbHost,$dbName,$dbUser,$dbPass;
-    $db = mysql_connect($dbHost,$dbUser,$dbPass) or die(mysql_error());
-    mysql_select_db($dbName,$db) or die();
     $query = "SELECT net_name, hostname, sid FROM sensor
               WHERE agent_type = 'pcap'
               ORDER BY hostname ASC";
