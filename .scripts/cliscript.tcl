@@ -280,10 +280,6 @@ if { $authResults == "INVALID" } {
 # Send info to Sguild
 SendToSguild $socketID [list CliScript $eventInfo]
 
-# DeleteEventIDList 14 none 2.3995041
-# DeleteEventIDList 12 none {2.3995048 2.3995046 2.3995044 2.3995043 2.3995042 2.3995039}
-
-
 set SESSION_STATE DEBUG
 
 # Xscript data comes in the format XscriptMainMsg window message
