@@ -1,35 +1,31 @@
 <?php
 include '.inc/functions.php';
-$s = 0;
-$t = 0;
-if (!isset($_REQUEST['sensor']))   { $sensor = ''; } else { $sensor = $_REQUEST['sensor'];   $s++; }
-if (!isset($_REQUEST['sid']))      { $sid    = ''; } else { $sid    = $_REQUEST['sid'];      $t++; }
-if (!isset($_REQUEST['sip']))      { $sip    = ''; } else { $sip    = $_REQUEST['sip'];      $s++; }
-if (!isset($_REQUEST['spt']))      { $spt    = ''; } else { $spt    = $_REQUEST['spt'];      $s++; }
-if (!isset($_REQUEST['dip']))      { $dip    = ''; } else { $dip    = $_REQUEST['dip'];      $s++; }
-if (!isset($_REQUEST['dpt']))      { $dpt    = ''; } else { $dpt    = $_REQUEST['dpt'];      $s++; }
-if (!isset($_REQUEST['ts']))       { $ts     = ''; } else { $ts     = $_REQUEST['ts'];       $s++; }
+// Argument counters
+$s = $t = 0 ;
 
-if (!isset($_REQUEST['stime'])) { 
-    $stime = '';
-} else {
-    $stime = $_REQUEST['stime'] + 1800;
-    $ts = date("Y-m-d H:i:s", "$stime");
-    $s++;
-}
+// Argument defaults
+$sensor = $sid = $sip = $spt = $dip = $dpt = $stime = $etime = $usr = $pwd = '';
 
-if (!isset($_REQUEST['user']))     { $usr    = ''; } else { $usr    = $_REQUEST['user'];     $s++; }
-if (!isset($_REQUEST['password'])) { $pwd    = ''; } else { $pwd    = $_REQUEST['password']; $s++; }
-
+// Grab any arguments provided in URI
+if (isset($_REQUEST['sensor']))   { $sensor = $_REQUEST['sensor'];   $s++; }
+if (isset($_REQUEST['sid']))      { $sid    = $_REQUEST['sid'];      $t++; }
+if (isset($_REQUEST['sip']))      { $sip    = $_REQUEST['sip'];      $s++; }
+if (isset($_REQUEST['spt']))      { $spt    = $_REQUEST['spt'];      $s++; }
+if (isset($_REQUEST['dip']))      { $dip    = $_REQUEST['dip'];      $s++; }
+if (isset($_REQUEST['dpt']))      { $dpt    = $_REQUEST['dpt'];      $s++; }
+if (isset($_REQUEST['stime']))    { $stime  = $_REQUEST['stime'];    $s++; }
+if (isset($_REQUEST['etime']))    { $etime  = $_REQUEST['etime'];    $s++; }
+if (isset($_REQUEST['user']))     { $usr    = $_REQUEST['user'];     $s++; }
+if (isset($_REQUEST['password'])) { $pwd    = $_REQUEST['password']; $s++; }
 ?>
 
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN"
+   "http://www.w3.org/TR/html4/strict.dtd">
 <html>
 <head>
 <title>
 capME!
 </title>
-
-<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1" />
 <style type="text/css" media="screen">@import ".css/capme.css";</style>
 <script type="text/javascript" src=".js/jq.js"></script>
 <script type="text/javascript" src=".js/capme.js"></script>
@@ -42,7 +38,7 @@ capME!
 <h2><span class=capme_l1>cap</span><span class=capme_l2>ME!</span></h2>
 </td>
 </tr>
-<form id=capme_form>
+<form name=capme_form>
 <tr>
 <td class=capme_left>Sensor:</td>
 <td>
@@ -69,9 +65,15 @@ capME!
 </tr>
 
 <tr>
-<td class=capme_left>Timestamp:</td>
-<td class=capme_right><input type=text maxlength=19 id=timestamp class=capme_selb value="<?php echo $ts;?>" />
-<span class=capme_ex>ex: 2012-10-24 01:02:03</span>
+<td class=capme_left>Start Time:</td>
+<td class=capme_right><input type=text maxlength=19 id=stime class=capme_selb value="<?php echo $stime;?>" />
+<span class=capme_ex>ex: 2012-11-28 19:03:24</span>
+</td>
+</tr>
+
+<tr>
+<td class=capme_left>End Time:</td>
+<td class=capme_right><input type=text maxlength=19 id=etime class=capme_selb value="<?php echo $etime;?>" />
 </td>
 </tr>
 
@@ -92,11 +94,10 @@ capME!
 <span class=capme_msg></span>
 </td>
 </tr>
-	
+
 <tr>
-<td colspan=2 class=capme_buttons>
-<input class=capme_reset type=reset value=reset>
-<input class=capme_submit type=button value=submit>
+<td colspan=2 class=capme_button>
+<div class=capme_submit>submit</div>
 <input id=formargs type=hidden value="<?php echo $s . "||" . $t;?>" />
 </td>
 </tr>

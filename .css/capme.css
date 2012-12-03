@@ -69,28 +69,17 @@
   width: 400px;
 }
 
-.capme_buttons {
+.capme_button {
   text-align: right;
   padding-top: 20px;
 }
 
-.capme_reset {
-  background: #c9c9c9;
-  color: #545454;
-  border: 2pt solid gray;
-  font-size: 20px;
-  font-weight: normal;
-  padding: 7px;
-  border-radius: 3px;
-  width: 100px;
-  margin-right: 10px;
-  cursor: pointer;
-}
-
 .capme_submit {
+  float: right;
+  text-align: center;
   background: #c9c9c9;
   color: #545454;
-  border: 2pt solid gray;
+  border: 1pt solid gray;
   font-size: 20px;
   font-weight: normal;
   padding: 7px;
@@ -114,7 +103,6 @@ span.capme_msg {
   padding: 0px 25px 0px 25px;
   border-radius: 3px;
   border: 1pt solid #f0c36d;
-  margin-right: 25px;
   text-align: center;
   font-size: 12px;
 }
@@ -209,3 +197,8 @@ span.capme_close:hover {
   padding: none;
   float: left;
 }
+
+.loader {
+  vertical-align: middle;
+}
+

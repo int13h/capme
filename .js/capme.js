@@ -1,30 +1,53 @@
 $(document).ready(function(){
 
+    // Force form submit on enter
+    document.onkeypress = function (e) {
+        if(!e) e=window.event;
+        key = e.keyCode ? e.keyCode : e.which;
+        if(key == 13) {
+            $(".capme_submit").click();
+        }
+    }
+
+    var loaderImg = "<img id=loader class=loader src=\".css/load.gif\">";
+    var err = 0;
+
     $(".capme_body").fadeIn(500);
 
-    $(".capme_reset").click(function() {
-        $("#capme_form")[0].reset();
-    });
-
     // We will fire if we have enough arguments otherwise we wait for a submit
+
     fArgs   = $("#formargs").val().split("||");
     numArgs = parseInt(fArgs[0]);
     gotSID  = fArgs[1];
+    gotPwd  = $("#password").length;
+    
 
-    if (numArgs >= 7) {
+    if (numArgs == 8) {
         switch (gotSID) {
             case "0": reqCap("posted"); break;
             case "1": reqCap("usefrm"); break;
         }
     }
 
+    // Send focus to password if we have some args
+    if (numArgs > 1 && gotPwd > 0) {
+        $("#password").focus();
+    }
+
     $(".capme_submit").click(function() {
-        reqCap("usefrm");
+        frmArgs = $('input[value!=""]').length;
+        if (frmArgs == 9) {
+            reqCap("usefrm");
+        } else {
+            theMsg("Please complete all form fields");
+        }
     });
 
+    // Gather and validate our values then send off to callback
     function reqCap(caller) {
 
-        if ($(".capme_submit").attr('disabled') != "false") {
+        if ($(".capme_submit").html() == "submit") {
+
             bOFF('.capme_submit');
             theMsg("Sending request..");
 
@@ -36,22 +59,40 @@ $(document).ready(function(){
                                sid     = s2h($("#capme_sid").val());
                                break;
             }
+            // IPs and ports
+            var sip = s2h(chkIP($("#sip").val()));
+            var spt = s2h(chkPort($("#spt").val()));
+            var dip = s2h(chkIP($("#dip").val()));
+            var dpt = s2h(chkPort($("#dpt").val()));
 
-            sip     = s2h($("#sip").val());
-            spt     = s2h($("#spt").val());
-            dip     = s2h($("#dip").val());
-            dpt     = s2h($("#dpt").val());
-            ts      = s2h($("#timestamp").val());
-            usr	    = s2h($("#username").val());
-            pwd     = s2h($("#password").val());
+            // Timestamps
+            var st = chkDate($("#stime").val());
+            var frmSd = nixtodt(st);
+            $("#stime").val(frmSd);
+            if ($("#etime").val().length == 0) {
+                var et = chkDate(st + 1800);
+                var frmEd = nixtodt(chkDate(et));
+                $("#etime").val(frmEd);
+            } else {
+                var et = chkDate($("#etime").val());
+                var frmEd = nixtodt(chkDate(et));
+                $("#etime").val(frmEd);
+            }
 
-            var urArgs = "d=" + sensor + "-" + sid + "-" + sip + "-" + spt + "-" + dip + "-" + dpt + "-" + ts + "-" + usr + "-" + pwd;
+            if (st > et) {
+                err = 1;
+                theMsg("Error: Start Time is greater than End Time!");
+                bON('.capme_submit');
+            }
+ 
+            // Credentials
+            var usr = s2h($("#username").val());
+            var pwd = s2h($("#password").val());
 
-            if (urArgs.indexOf("--") != -1) {
-     
-                theMsg("Please complete all form fields");
-
-            } else { 
+            // Continue if no errors
+            if (err === 0) {
+            
+                var urArgs = "d=" + sensor + "-" + sid + "-" + sip + "-" + spt + "-" + dip + "-" + dpt + "-" + st + "-" + et + "-" + usr + "-" + pwd;
 
                 $(function(){
                     $.get(".inc/callback.php?" + urArgs, function(data){cbtx(data)});
@@ -59,28 +100,27 @@ $(document).ready(function(){
                         
                 function cbtx(data){
                     eval("txRaw=" + data);
-                    txCMD    = txRaw.cmd;
                     txResult = txRaw.tx;
+                    txDebug  = txRaw.dbg;
+                    txError  = txRaw.err;
 
-                    if (txResult.length > 0) {
-                        var txt = '';
-                        txt += "<table class=capme_result align=center width=940 cellpadding=0 cellspacing=0>";
-                        txt += "<tr>";
-                        txt += "<td class=capme_close>";
-                        txt += "<span class=capme_close>close</span>";
-                        txt += "</td></tr>";
-                        txt += "<tr>";
-                        txt += "<td class=capme_text>";
-                        txt += txResult;
-                        txt += "</td></tr></table>";
-                        $(".capme_div").after(txt);
-                        theMsg("Request was successful");
-                        $(".capme_div").hide();
-                        $(".capme_result").show();
-                        $(".capme_msg").fadeOut('slow');
-                    } else {
-                        theMsg("No result.");
-                    }
+                    var txt = '';
+                    txt += "<table class=capme_result align=center width=940 cellpadding=0 cellspacing=0>";
+                    txt += "<tr>";
+                    txt += "<td class=capme_close>";
+                    txt += "<span class=capme_close>close</span>";
+                    txt += "</td></tr>";
+                    txt += "<tr>";
+                    txt += "<td class=capme_text>";
+                    txt += txResult;
+                    txt += txDebug;
+                    txt += txError;
+                    txt += "</td></tr></table>";
+                    $(".capme_div").after(txt);
+                    theMsg("Request was successful");
+                    $(".capme_div").hide();
+                    $(".capme_result").show();
+                    $(".capme_msg").fadeOut('slow');
                 }
             }
         }
@@ -101,13 +141,87 @@ $(document).ready(function(){
     function bON(btn) {
         $(btn).attr('disabled',false);
         $(btn).css('cursor','pointer');
-        $(btn).val('submit');    
+        $(btn).html('submit');    
     }
 
     function bOFF(btn) {
         $(btn).attr('disabled',true);
-        $(btn).css('cursor','default');
-        $(btn).val('locked..');
+        $(btn).html(loaderImg);
+    }
+
+    // IP validation
+    function chkIP(ip) {
+        var valid = /^\b(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\b/;
+        if (!valid.test(ip)) {
+            theMsg("Error: Bad IP");
+            bON('.capme_submit');
+            err = 1;
+        } else {
+            return ip;
+        }
+    }
+
+    // port validation
+    function chkPort(port) {
+        var valid = /^[0-9]+$\b/;
+        if (!valid.test(port) || port > 65535 || port.charAt(0) == 0) {
+            theMsg("Error: Bad Port");
+            bON('.capme_submit');
+            err = 1;
+        } else {
+            return port;
+        } 
+    }
+
+    // date validation
+    function chkDate(stamp) {
+        var n = 0;
+        // We will accept yyyy-mm-dd hh:mm:ss or unixtime
+        var chk1 = /^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}$\b/;
+        var chk2 = /^\d{10}$\b/;
+        if (chk1.test(stamp)) {
+            n++;
+            var sY = stamp.slice(0,4);
+            var sM = stamp.slice(5,7);
+            var sD = stamp.slice(8,10);
+            var sh = stamp.slice(11,13);
+            var sm = stamp.slice(14,16);
+            var ss = stamp.slice(17,19);
+            var unixTime = parseInt((new Date(sY,sM - 1,sD,sh,sm,ss).getTime()/1000.0));
+        }
+        if (chk2.test(stamp)) {
+            n++;
+            var unixTime = parseInt(stamp)
+        }
+
+        if ( n == 0) {
+            theMsg("Error: Bad Timestamp");
+            bON('.capme_submit');
+            err = 1;
+        } else {
+            return unixTime;
+        } 
+    }
+
+    // Better on the eyes
+    function nixtodt(stamp) {
+        var ms = new Date(stamp*1000);
+        var Y = ms.getFullYear();
+        var m = zeroPad(ms.getMonth() + 1);
+        var d = zeroPad(ms.getDate());
+        var H = zeroPad(ms.getHours());
+        var i = zeroPad(ms.getMinutes());
+        var s = zeroPad(ms.getSeconds());
+
+        var newTime = Y + "-" + m + "-" + d + " " + H + ":" + i + ":" + s;
+        return newTime;
+    }
+
+    function zeroPad(part) {
+        if (part.toString().length == 1) {
+            part = "0" + part;
+        }
+        return part;
     }
 
     function d2h(d) {

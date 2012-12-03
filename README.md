@@ -17,5 +17,4 @@ Easy bake oven for sguil transcripts
 ## Notes
 
  * If no sid is supplied the script takes a peek in the sancp table to find an appropriate one.  
-
- * If you arent using securityonion 2 sguild libs need minor patches for this to work. Take a peek in the patches folder.
+ * If you aren't using securityonion then two sguild libs need minor patches for this to work. Take a peek in the patches folder.
