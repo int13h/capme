@@ -10,8 +10,6 @@ if (!isset($_REQUEST['d'])) {
 
 $d = explode("-", $d);
 
-$sensor = h2s($d[0]);
-$sid	= h2s($d[1]);
 $sip	= h2s($d[2]);
 $spt	= h2s($d[3]);
 $dip	= h2s($d[4]);
@@ -30,29 +28,28 @@ $err = 0;
 $fmtd = $debug = $errMsg = '';
 
 // Find appropriate sensor
-if ($sid == "00") {
 
-    $query = "SELECT s2.sid, s2.hostname
-              FROM sancp
-              LEFT JOIN sensor ON sancp.sid = sensor.sid
-              LEFT JOIN sensor AS s2 ON sensor.hostname = s2.hostname
-              WHERE sancp.start_time >=  '$st' AND sancp.end_time <= '$et'
-              AND ((src_ip = INET_ATON('$sip') AND src_port = $spt AND dst_ip = INET_ATON('$dip') AND dst_port = $dpt) OR (src_ip = INET_ATON('$dip') AND src_port = $dpt AND dst_ip = INET_ATON('$sip') AND dst_port = $spt))
-              AND s2.agent_type = 'pcap' LIMIT 1";
+$query = "SELECT sancp.start_time, s2.sid, s2.hostname
+          FROM sancp
+          LEFT JOIN sensor ON sancp.sid = sensor.sid
+          LEFT JOIN sensor AS s2 ON sensor.hostname = s2.hostname
+          WHERE sancp.start_time >=  '$st' AND sancp.end_time <= '$et'
+          AND ((src_ip = INET_ATON('$sip') AND src_port = $spt AND dst_ip = INET_ATON('$dip') AND dst_port = $dpt) OR (src_ip = INET_ATON('$dip') AND src_port = $dpt AND dst_ip = INET_ATON('$sip') AND dst_port = $spt))
+          AND s2.agent_type = 'pcap' LIMIT 1";
 
-    $response = mysql_query($query);
+$response = mysql_query($query);
 
-    if (!$response) {
-        $err = 1;
-        $errMsg = "The query failed";
-    } else if (mysql_num_rows($response) == 0) {
-        $err = 1;
-        $errMsg = "Failed to find a matching sid, please try again in a few seconds";
-    } else {
-        $row = mysql_fetch_assoc($response);
-        $sensor = $row["hostname"]; 
-        $sid    = $row["sid"];
-    }
+if (!$response) {
+    $err = 1;
+    $errMsg = "The query failed";
+} else if (mysql_num_rows($response) == 0) {
+    $err = 1;
+    $errMsg = "Failed to find a matching sid, please try again in a few seconds";
+} else {
+    $row = mysql_fetch_assoc($response);
+    $st	= $row["start_time"];
+    $sensor = $row["hostname"]; 
+    $sid    = $row["sid"];
 }
 
 if ($err == 1) {

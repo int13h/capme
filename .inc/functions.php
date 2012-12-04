@@ -17,28 +17,5 @@ function s2h($x) {
   return($s);
 }
 
-// Sensor list
-function mkSensor($active) {
-    $query = "SELECT net_name, hostname, sid FROM sensor
-              WHERE agent_type = 'pcap'
-              ORDER BY hostname ASC";
-    $sensors = mysql_query($query);
-
-    while ($row = mysql_fetch_row($sensors)) {
-        $nn = $row[0];
-        $hn = $row[1];
-        $si = $row[2];
-
-        $selected = '';
-
-        if ($si == $active) {
-            $selected="selected=\"yes\"";
-        }
-
-        echo "<option data-sensorname=\"$hn\" value=\"$si\" $selected>$nn - $hn - $si</option>\n";
-
-    }
-}
-
 ?>
 

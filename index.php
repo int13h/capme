@@ -1,14 +1,12 @@
 <?php
 include '.inc/functions.php';
 // Argument counters
-$s = $t = 0 ;
+$s = 0;
 
 // Argument defaults
-$sensor = $sid = $sip = $spt = $dip = $dpt = $stime = $etime = $usr = $pwd = '';
+$sip = $spt = $dip = $dpt = $stime = $etime = $usr = $pwd = '';
 
 // Grab any arguments provided in URI
-if (isset($_REQUEST['sensor']))   { $sensor = $_REQUEST['sensor'];   $s++; }
-if (isset($_REQUEST['sid']))      { $sid    = $_REQUEST['sid'];      $t++; }
 if (isset($_REQUEST['sip']))      { $sip    = $_REQUEST['sip'];      $s++; }
 if (isset($_REQUEST['spt']))      { $spt    = $_REQUEST['spt'];      $s++; }
 if (isset($_REQUEST['dip']))      { $dip    = $_REQUEST['dip'];      $s++; }
@@ -39,14 +37,6 @@ capME!
 </td>
 </tr>
 <form name=capme_form>
-<tr>
-<td class=capme_left>Sensor:</td>
-<td>
-<SELECT id=capme_sid class=capme_select>
-<?php mkSensor($sid);?>
-</SELECT>
-</td>
-</tr>
 
 <tr>
 <td class=capme_left>Src IP / Port:</td>
@@ -98,7 +88,7 @@ capME!
 <tr>
 <td colspan=2 class=capme_button>
 <div class=capme_submit>submit</div>
-<input id=formargs type=hidden value="<?php echo $s . "||" . $t;?>" />
+<input id=formargs type=hidden value="<?php echo $s;?>" />
 </td>
 </tr>
 </form>

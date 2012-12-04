@@ -12,31 +12,31 @@ $(document).ready(function(){
     var loaderImg = "<img id=loader class=loader src=\".css/load.gif\">";
     var err = 0;
 
-    $(".capme_body").fadeIn(500);
+    $(".capme_body").fadeIn('slow');
 
     // We will fire if we have enough arguments otherwise we wait for a submit
-
-    fArgs   = $("#formargs").val().split("||");
-    numArgs = parseInt(fArgs[0]);
-    gotSID  = fArgs[1];
-    gotPwd  = $("#password").length;
+    numArgs = parseInt($("#formargs").val());
+    gotUsr  = $("#username").val().length;
+    gotPwd  = $("#password").val().length;
     
-
     if (numArgs == 8) {
-        switch (gotSID) {
-            case "0": reqCap("posted"); break;
-            case "1": reqCap("usefrm"); break;
-        }
+        reqCap("posted");
     }
 
-    // Send focus to password if we have some args
-    if (numArgs > 1 && gotPwd > 0) {
-        $("#password").focus();
+    // Send focus to credentials if we have some args
+    if (numArgs > 1) {
+        if (gotUsr == 0) {
+            $("#username").focus();
+        } else if (gotPwd == 0) {
+            $("#password").focus();
+        } else {
+            $("#password").focus();
+        }    
     }
-
+ 
     $(".capme_submit").click(function() {
-        frmArgs = $('input[value!=""]').length;
-        if (frmArgs == 9) {
+        frmArgs = $('input[value!=""]').length - 1;
+       if (frmArgs == 8) {
             reqCap("usefrm");
         } else {
             theMsg("Please complete all form fields");
@@ -51,14 +51,6 @@ $(document).ready(function(){
             bOFF('.capme_submit');
             theMsg("Sending request..");
 
-            switch (caller) {
-                case "posted": sensor  = s2h("00");
-                               sid     = s2h("00");
-                               break;
-                case "usefrm": sensor  = s2h($("#capme_sid option:selected").data('sensorname'));
-                               sid     = s2h($("#capme_sid").val());
-                               break;
-            }
             // IPs and ports
             var sip = s2h(chkIP($("#sip").val()));
             var spt = s2h(chkPort($("#spt").val()));
@@ -66,19 +58,22 @@ $(document).ready(function(){
             var dpt = s2h(chkPort($("#dpt").val()));
 
             // Timestamps
-            var st = chkDate($("#stime").val());
-            var frmSd = nixtodt(st);
-            $("#stime").val(frmSd);
-            if ($("#etime").val().length == 0) {
-                var et = chkDate(st + 1800);
-                var frmEd = nixtodt(chkDate(et));
-                $("#etime").val(frmEd);
-            } else {
-                var et = chkDate($("#etime").val());
-                var frmEd = nixtodt(chkDate(et));
-                $("#etime").val(frmEd);
+            if ($("#stime").val().length > 0) {
+                var st = chkDate($("#stime").val());
+                if (err == 0) {
+                    var frmEd = nixtodt(chkDate(st));
+                    $("#stime").val(frmEd);
+                }
             }
 
+            if ($("#etime").val().length > 0) {
+                var et = chkDate($("#etime").val());
+                if (err == 0) {
+                    var frmEd = nixtodt(chkDate(et));
+                    $("#etime").val(frmEd);
+                }
+            } 
+     
             if (st > et) {
                 err = 1;
                 theMsg("Error: Start Time is greater than End Time!");
@@ -92,7 +87,7 @@ $(document).ready(function(){
             // Continue if no errors
             if (err === 0) {
             
-                var urArgs = "d=" + sensor + "-" + sid + "-" + sip + "-" + spt + "-" + dip + "-" + dpt + "-" + st + "-" + et + "-" + usr + "-" + pwd;
+                var urArgs = "d=" + sip + "-" + spt + "-" + dip + "-" + dpt + "-" + st + "-" + et + "-" + usr + "-" + pwd;
 
                 $(function(){
                     $.get(".inc/callback.php?" + urArgs, function(data){cbtx(data)});
@@ -194,7 +189,7 @@ $(document).ready(function(){
             var unixTime = parseInt(stamp)
         }
 
-        if ( n == 0) {
+        if (n == 0) {
             theMsg("Error: Bad Timestamp");
             bON('.capme_submit');
             err = 1;
