@@ -10,14 +10,14 @@ if (!isset($_REQUEST['d'])) {
 
 $d = explode("-", $d);
 
-$sip	= h2s($d[2]);
-$spt	= h2s($d[3]);
-$dip	= h2s($d[4]);
-$dpt	= h2s($d[5]);
-$st	= $d[6];
-$et     = $d[7];
-$usr	= h2s($d[8]);
-$pwd	= h2s($d[9]);
+$sip	= h2s($d[0]);
+$spt	= h2s($d[1]);
+$dip	= h2s($d[2]);
+$dpt	= h2s($d[3]);
+$st	= $d[4];
+$et     = $d[5];
+$usr	= h2s($d[6]);
+$pwd	= h2s($d[7]);
 
 // Format timestamps
 $st = date("Y-m-d H:i:s", $st);
@@ -41,7 +41,7 @@ $response = mysql_query($query);
 
 if (!$response) {
     $err = 1;
-    $errMsg = "The query failed";
+    $errMsg = "Error: The query failed. Can we talk to the database?";
 } else if (mysql_num_rows($response) == 0) {
     $err = 1;
     $errMsg = "Failed to find a matching sid, please try again in a few seconds";
