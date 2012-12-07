@@ -95,27 +95,33 @@ $(document).ready(function(){
                         
                 function cbtx(data){
                     eval("txRaw=" + data);
+                    
                     txResult = txRaw.tx;
                     txDebug  = txRaw.dbg;
                     txError  = txRaw.err;
 
-                    var txt = '';
-                    txt += "<table class=capme_result align=center width=940 cellpadding=0 cellspacing=0>";
-                    txt += "<tr>";
-                    txt += "<td class=capme_close>";
-                    txt += "<span class=capme_close>close</span>";
-                    txt += "</td></tr>";
-                    txt += "<tr>";
-                    txt += "<td class=capme_text>";
-                    txt += txResult;
-                    txt += txDebug;
-                    txt += txError;
-                    txt += "</td></tr></table>";
-                    $(".capme_div").after(txt);
-                    theMsg("Request was successful");
-                    $(".capme_div").hide();
-                    $(".capme_result").show();
-                    $(".capme_msg").fadeOut('slow');
+                    if (txResult != 0) {
+                        var txt = '';
+                        txt += "<table class=capme_result align=center width=940 cellpadding=0 cellspacing=0>";
+                        txt += "<tr>";
+                        txt += "<td class=capme_close>";
+                        txt += "<span class=capme_close>close</span>";
+                        txt += "</td></tr>";
+                        txt += "<tr>";
+                        txt += "<td class=capme_text>";
+                        txt += txResult;
+                        txt += txDebug;
+                        txt += txError;
+                        txt += "</td></tr></table>";
+                        $(".capme_div").after(txt);
+                        theMsg("Request was successful");
+                        $(".capme_div").hide();
+                        $(".capme_result").show();
+                        $(".capme_msg").fadeOut('slow');
+                    } else {
+                        theMsg(txError);
+                        bON('.capme_submit');
+                    }
                 }
             }
         }

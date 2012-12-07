@@ -41,7 +41,7 @@ $response = mysql_query($query);
 
 if (!$response) {
     $err = 1;
-    $errMsg = "Error: The query failed. Can we talk to the database?";
+    $errMsg = "Error: The query failed. Please verify database connectivity";
 } else if (mysql_num_rows($response) == 0) {
     $err = 1;
     $errMsg = "Failed to find a matching sid, please try again in a few seconds";
@@ -54,7 +54,7 @@ if (!$response) {
 
 if ($err == 1) {
 
-    $result = array("tx"  => "$fmtd",
+    $result = array("tx"  => "0",
                     "dbg" => "$debug",
                     "err" => "$errMsg");
 
