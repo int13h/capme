@@ -18,6 +18,7 @@ $st	= $d[4];
 $et     = $d[5];
 $usr	= h2s($d[6]);
 $pwd	= h2s($d[7]);
+$sidsrc = h2s($d[8]);
 
 // Format timestamps
 $st = date("Y-m-d H:i:s", $st);
@@ -29,19 +30,28 @@ $fmtd = $debug = $errMsg = '';
 
 // Find appropriate sensor
 
-$query = "SELECT sancp.start_time, s2.sid, s2.hostname
-          FROM sancp
-          LEFT JOIN sensor ON sancp.sid = sensor.sid
-          LEFT JOIN sensor AS s2 ON sensor.hostname = s2.hostname
-          WHERE sancp.start_time >=  '$st' AND sancp.end_time <= '$et'
-          AND ((src_ip = INET_ATON('$sip') AND src_port = $spt AND dst_ip = INET_ATON('$dip') AND dst_port = $dpt) OR (src_ip = INET_ATON('$dip') AND src_port = $dpt AND dst_ip = INET_ATON('$sip') AND dst_port = $spt))
-          AND s2.agent_type = 'pcap' LIMIT 1";
+$queries = array(
+                 "sancp" => "SELECT sancp.start_time, s2.sid, s2.hostname
+                             FROM sancp
+                             LEFT JOIN sensor ON sancp.sid = sensor.sid
+                             LEFT JOIN sensor AS s2 ON sensor.hostname = s2.hostname
+                             WHERE sancp.start_time >=  '$st' AND sancp.end_time <= '$et'
+                             AND ((src_ip = INET_ATON('$sip') AND src_port = $spt AND dst_ip = INET_ATON('$dip') AND dst_port = $dpt) OR (src_ip = INET_ATON('$dip') AND src_port = $dpt AND dst_ip = INET_ATON('$sip') AND dst_port = $spt))
+                             AND s2.agent_type = 'pcap' LIMIT 1",
 
-$response = mysql_query($query);
+                 "event" => "SELECT event.timestamp AS start_time, s2.sid, s2.hostname
+                             FROM event
+                             LEFT JOIN sensor ON event.sid = sensor.sid
+                             LEFT JOIN sensor AS s2 ON sensor.hostname = s2.hostname
+                             WHERE timestamp BETWEEN '$st' AND '$et'
+                             AND ((src_ip = INET_ATON('$sip') AND src_port = $spt AND dst_ip = INET_ATON('$dip') AND dst_port = $dpt) OR (src_ip = INET_ATON('$dip') AND src_port = $dpt AND dst_ip = INET_ATON('$sip') AND dst_port = $spt))
+                             AND s2.agent_type = 'pcap' LIMIT 1");
+
+$response = mysql_query($queries[$sidsrc]);
 
 if (!$response) {
     $err = 1;
-    $errMsg = "Error: The query failed. Please verify database connectivity";
+    $errMsg = "Error: The query failed, please verify database connectivity";
 } else if (mysql_num_rows($response) == 0) {
     $err = 1;
     $errMsg = "Failed to find a matching sid, please try again in a few seconds";

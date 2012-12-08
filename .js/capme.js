@@ -35,8 +35,8 @@ $(document).ready(function(){
     }
  
     $(".capme_submit").click(function() {
-        frmArgs = $('input[value!=""]').length - 1;
-       if (frmArgs == 8) {
+       frmArgs = $('input[value!=""]').length;
+       if (frmArgs == 11) {
             reqCap("usefrm");
         } else {
             theMsg("Please complete all form fields");
@@ -50,6 +50,9 @@ $(document).ready(function(){
 
             bOFF('.capme_submit');
             theMsg("Sending request..");
+
+            // SID Source
+            var sidsrc = s2h($('input:radio[name=sidsrc]:checked').val());
 
             // IPs and ports
             var sip = s2h(chkIP($("#sip").val()));
@@ -87,7 +90,7 @@ $(document).ready(function(){
             // Continue if no errors
             if (err === 0) {
             
-                var urArgs = "d=" + sip + "-" + spt + "-" + dip + "-" + dpt + "-" + st + "-" + et + "-" + usr + "-" + pwd;
+                var urArgs = "d=" + sip + "-" + spt + "-" + dip + "-" + dpt + "-" + st + "-" + et + "-" + usr + "-" + pwd + "-" + sidsrc;
 
                 $(function(){
                     $.get(".inc/callback.php?" + urArgs, function(data){cbtx(data)});

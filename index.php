@@ -5,7 +5,6 @@ $s = 0;
 
 // Argument defaults
 $sip = $spt = $dip = $dpt = $stime = $etime = $usr = $pwd = '';
-
 // Grab any arguments provided in URI
 if (isset($_REQUEST['sip']))      { $sip    = $_REQUEST['sip'];      $s++; }
 if (isset($_REQUEST['spt']))      { $spt    = $_REQUEST['spt'];      $s++; }
@@ -76,6 +75,14 @@ capME!
 <tr>
 <td class=capme_left>Password:</td>
 <td class=capme_right><input type=password maxlength=32 id=password class=capme_selb value="<?php echo $pwd;?>" />
+</td>
+</tr>
+
+<tr>
+<td class=capme_left>Sid Source:</td>
+<td class=capme_right>
+<input type=radio name=sidsrc class=capme_rad value="sancp" checked>sancp
+<input type=radio name=sidsrc class=capme_rad value="event">event
 </td>
 </tr>
 
