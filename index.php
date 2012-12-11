@@ -4,7 +4,7 @@ include '.inc/functions.php';
 $s = 0;
 
 // Argument defaults
-$sip = $spt = $dip = $dpt = $stime = $etime = $usr = $pwd = '';
+$sip = $spt = $dip = $dpt = $stime = $etime = $usr = $pwd = $sancp = $event = '';
 // Grab any arguments provided in URI
 if (isset($_REQUEST['sip']))      { $sip    = $_REQUEST['sip'];      $s++; }
 if (isset($_REQUEST['spt']))      { $spt    = $_REQUEST['spt'];      $s++; }
@@ -14,6 +14,11 @@ if (isset($_REQUEST['stime']))    { $stime  = $_REQUEST['stime'];    $s++; }
 if (isset($_REQUEST['etime']))    { $etime  = $_REQUEST['etime'];    $s++; }
 if (isset($_REQUEST['user']))     { $usr    = $_REQUEST['user'];     $s++; }
 if (isset($_REQUEST['password'])) { $pwd    = $_REQUEST['password']; $s++; }
+if (isset($_REQUEST['filename'])) { 
+    $event = "checked";
+} else {
+    $sancp = "checked";
+}
 ?>
 
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN"
@@ -81,8 +86,8 @@ capME!
 <tr>
 <td class=capme_left>Sid Source:</td>
 <td class=capme_right>
-<input type=radio name=sidsrc class=capme_rad value="sancp" checked>sancp
-<input type=radio name=sidsrc class=capme_rad value="event">event
+<input type=radio name=sidsrc class=capme_rad value="sancp"<?php echo $sancp;?>>sancp
+<input type=radio name=sidsrc class=capme_rad value="event"<?php echo $event;?>>event
 </td>
 </tr>
 
