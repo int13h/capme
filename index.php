@@ -15,9 +15,9 @@ if (isset($_REQUEST['etime']))    { $etime  = $_REQUEST['etime'];    $s++; }
 if (isset($_REQUEST['user']))     { $usr    = $_REQUEST['user'];     $s++; }
 if (isset($_REQUEST['password'])) { $pwd    = $_REQUEST['password']; $s++; }
 if (isset($_REQUEST['filename'])) { 
-    $event = "checked";
+    $event = " checked";
 } else {
-    $sancp = "checked";
+    $sancp = " checked";
 }
 ?>
 
