@@ -54,8 +54,7 @@ if (!$response) {
     $errMsg = "Error: The query failed, please verify database connectivity";
 } else if (mysql_num_rows($response) == 0) {
     $err = 1;
-    //$errMsg = "Failed to find a matching sid, please try again in a few seconds";
-    $errMsg = $queries[$sidsrc];
+    $errMsg = "Failed to find a matching sid, please try again in a few seconds";
 } else {
     $row = mysql_fetch_assoc($response);
     $st	= $row["start_time"];
