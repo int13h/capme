@@ -210,12 +210,12 @@ $(document).ready(function(){
     // Better on the eyes
     function nixtodt(stamp) {
         var ms = new Date(stamp*1000);
-        var Y = ms.getFullYear();
-        var m = zeroPad(ms.getMonth() + 1);
-        var d = zeroPad(ms.getDate());
-        var H = zeroPad(ms.getHours());
-        var i = zeroPad(ms.getMinutes());
-        var s = zeroPad(ms.getSeconds());
+        var Y = ms.getUTCFullYear();
+        var m = zeroPad(ms.getUTCMonth() + 1);
+        var d = zeroPad(ms.getUTCDate());
+        var H = zeroPad(ms.getUTCHours());
+        var i = zeroPad(ms.getUTCMinutes());
+        var s = zeroPad(ms.getUTCSeconds());
 
         var newTime = Y + "-" + m + "-" + d + " " + H + ":" + i + ":" + s;
         return newTime;
