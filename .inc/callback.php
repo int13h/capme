@@ -21,8 +21,8 @@ $pwd	= h2s($d[7]);
 $sidsrc = h2s($d[8]);
 
 // Format timestamps
-$st = gmdate("Y-m-d H:i:s", $st);
-$et = gmdate("Y-m-d H:i:s", $et);
+$st = date("Y-m-d H:i:s", $st);
+$et = date("Y-m-d H:i:s", $et);
 
 // Defaults
 $err = 0;
@@ -54,8 +54,7 @@ if (!$response) {
     $errMsg = "Error: The query failed, please verify database connectivity";
 } else if (mysql_num_rows($response) == 0) {
     $err = 1;
-    //$errMsg = "Failed to find a matching sid, please try again in a few seconds";
-    $errMsg = $queries[$sidsrc];
+    $errMsg = "Failed to find a matching sid, please try again in a few seconds";
 } else {
     $row = mysql_fetch_assoc($response);
     $st	= $row["start_time"];
