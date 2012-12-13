@@ -61,7 +61,6 @@ capME!
 <tr>
 <td class=capme_left>Start Time:</td>
 <td class=capme_right><input type=text maxlength=19 id=stime class=capme_selb value="<?php echo $stime;?>" />
-<span class=capme_ex>ex: 2012-11-28 19:03:24</span>
 </td>
 </tr>
 
