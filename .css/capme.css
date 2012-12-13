@@ -199,6 +199,13 @@ span.capme_close:hover {
   float: left;
 }
 
+.txtext_qry {
+  width: inherit;
+  background: lightyellow;
+  padding: none;
+  float: left;
+}
+
 .loader {
   vertical-align: middle;
 }

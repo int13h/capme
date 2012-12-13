@@ -73,7 +73,7 @@ $(document).ready(function(){
                 if (err == 0) {
                     $("#etime").val(et);
                 }
-            }
+            } 
 
             if (st > et) {
                 err = 1;
@@ -86,7 +86,7 @@ $(document).ready(function(){
             var pwd = s2h($("#password").val());
 
             // Continue if no errors
-            if (err === 0) {
+            if (err == 0) {
             
                 var urArgs = "d=" + sip + "-" + spt + "-" + dip + "-" + dpt + "-" + st + "-" + et + "-" + usr + "-" + pwd + "-" + sidsrc;
 
@@ -178,20 +178,8 @@ $(document).ready(function(){
     // date validation
     function chkDate(stamp) {
         var n = 0;
-        // We will accept yyyy-mm-dd hh:mm:ss or unixtime
-        var chk1 = /^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}$\b/;
-        var chk2 = /^\d{10}$\b/;
+        var chk1 = /^\d{10}$\b/;
         if (chk1.test(stamp)) {
-            n++;
-            var sY = stamp.slice(0,4);
-            var sM = stamp.slice(5,7);
-            var sD = stamp.slice(8,10);
-            var sh = stamp.slice(11,13);
-            var sm = stamp.slice(14,16);
-            var ss = stamp.slice(17,19);
-            var unixTime = parseInt((new Date(sY,sM - 1,sD,sh,sm,ss).getTime()/1000.0));
-        }
-        if (chk2.test(stamp)) {
             n++;
             var unixTime = parseInt(stamp)
         }

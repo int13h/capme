@@ -52,9 +52,11 @@ $response = mysql_query($queries[$sidsrc]);
 if (!$response) {
     $err = 1;
     $errMsg = "Error: The query failed, please verify database connectivity";
+    $debug = $queries[$sidsrc];
 } else if (mysql_num_rows($response) == 0) {
     $err = 1;
     $errMsg = "Failed to find a matching sid, please try again in a few seconds";
+    $debug = $queries[$sidsrc];
 } else {
     $row = mysql_fetch_assoc($response);
     $st	= $row["start_time"];
@@ -63,7 +65,6 @@ if (!$response) {
 }
 
 if ($err == 1) {
-
     $result = array("tx"  => "0",
                     "dbg" => "$debug",
                     "err" => "$errMsg");
@@ -91,6 +92,9 @@ if ($err == 1) {
             $fmtd  .= $line . "<br>";
         }
     }
+
+    // Add query to debug
+    $debug .= "<span class=txtext_qry>QUERY: " . $queries[$sidsrc] . "</span>";
 
     $result = array("tx"  => "$fmtd",
                     "dbg" => "$debug",
