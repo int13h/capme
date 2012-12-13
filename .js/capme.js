@@ -64,19 +64,17 @@ $(document).ready(function(){
             if ($("#stime").val().length > 0) {
                 var st = chkDate($("#stime").val());
                 if (err == 0) {
-                    var frmEd = nixtodt(chkDate(st));
-                    $("#stime").val(frmEd);
+                    $("#stime").val(st);
                 }
             }
 
             if ($("#etime").val().length > 0) {
                 var et = chkDate($("#etime").val());
                 if (err == 0) {
-                    var frmEd = nixtodt(chkDate(et));
-                    $("#etime").val(frmEd);
+                    $("#etime").val(et);
                 }
-            } 
-     
+            }
+
             if (st > et) {
                 err = 1;
                 theMsg("Error: Start Time is greater than End Time!");
@@ -205,27 +203,6 @@ $(document).ready(function(){
         } else {
             return unixTime;
         } 
-    }
-
-    // Better on the eyes
-    function nixtodt(stamp) {
-        var ms = new Date(stamp*1000);
-        var Y = ms.getUTCFullYear();
-        var m = zeroPad(ms.getUTCMonth() + 1);
-        var d = zeroPad(ms.getUTCDate());
-        var H = zeroPad(ms.getUTCHours());
-        var i = zeroPad(ms.getUTCMinutes());
-        var s = zeroPad(ms.getUTCSeconds());
-
-        var newTime = Y + "-" + m + "-" + d + " " + H + ":" + i + ":" + s;
-        return newTime;
-    }
-
-    function zeroPad(part) {
-        if (part.toString().length == 1) {
-            part = "0" + part;
-        }
-        return part;
     }
 
     function d2h(d) {
