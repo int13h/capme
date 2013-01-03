@@ -34,7 +34,7 @@ $queries = array(
                  "sancp" => "SELECT sancp.start_time, s2.sid, s2.hostname
                              FROM sancp
                              LEFT JOIN sensor ON sancp.sid = sensor.sid
-                             LEFT JOIN sensor AS s2 ON sensor.hostname = s2.hostname
+                             LEFT JOIN sensor AS s2 ON sensor.net_name = s2.hostname
                              WHERE sancp.start_time >=  '$st' AND sancp.end_time <= '$et'
                              AND ((src_ip = INET_ATON('$sip') AND src_port = $spt AND dst_ip = INET_ATON('$dip') AND dst_port = $dpt) OR (src_ip = INET_ATON('$dip') AND src_port = $dpt AND dst_ip = INET_ATON('$sip') AND dst_port = $spt))
                              AND s2.agent_type = 'pcap' LIMIT 1",
@@ -42,7 +42,7 @@ $queries = array(
                  "event" => "SELECT event.timestamp AS start_time, s2.sid, s2.hostname
                              FROM event
                              LEFT JOIN sensor ON event.sid = sensor.sid
-                             LEFT JOIN sensor AS s2 ON sensor.hostname = s2.hostname
+                             LEFT JOIN sensor AS s2 ON sensor.net_name = s2.hostname
                              WHERE timestamp BETWEEN '$st' AND '$et'
                              AND ((src_ip = INET_ATON('$sip') AND src_port = $spt AND dst_ip = INET_ATON('$dip') AND dst_port = $dpt) OR (src_ip = INET_ATON('$dip') AND src_port = $dpt AND dst_ip = INET_ATON('$sip') AND dst_port = $spt))
                              AND s2.agent_type = 'pcap' LIMIT 1");
