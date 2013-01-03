@@ -121,8 +121,9 @@ $(document).ready(function(){
                         $(".capme_msg").fadeOut('slow');
                     } else {
                         theMsg(txError);
-                        bON('.capme_submit');
                     }
+                    
+                    bON('.capme_submit');
                 }
             }
         }

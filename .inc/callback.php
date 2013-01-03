@@ -21,8 +21,8 @@ $pwd	= h2s($d[7]);
 $sidsrc = h2s($d[8]);
 
 // Format timestamps
-$st = date("Y-m-d H:i:s", $st);
-$et = date("Y-m-d H:i:s", $et);
+$st = gmdate("Y-m-d H:i:s", $st);
+$et = gmdate("Y-m-d H:i:s", $et);
 
 // Defaults
 $err = 0;
