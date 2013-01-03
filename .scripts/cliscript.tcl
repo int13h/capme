@@ -1,4 +1,4 @@
-#!/usr/local/bin/tclsh
+#!/usr/bin/tclsh
 
 # cliscript.tcl - Based on "quickscript.tcl"
 # Portions Copyright (C) 2012 Paul Halliday <paul.halliday@gmail.com>
@@ -15,7 +15,7 @@
 ########################## GLOBALS ##################################
 
 set VERSION "SGUIL-0.8.0 OPENSSL ENABLED"
-set SERVER 10.13.1.226
+set SERVER 127.0.0.1
 set PORT 7734
 
 # Comment out the following 2 lines if 
