@@ -1,7 +1,7 @@
 <?php
 // DB Info.
-$dbHost = '10.13.1.226';
-$dbName = 'sguildb';
+$dbHost = '127.0.0.1';
+$dbName = 'securityonion_db';
 $dbUser = 'readonly';
-$dbPass = 'readonly';
+$dbPass = 'securityonion';
 ?>
