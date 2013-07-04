@@ -35,6 +35,7 @@ st	- time of the event from the sensor's perspective (may be more accurate than 
 sid	- sensor id
 */
 
+$sensor = "";
 if ($sidsrc == "elsa") {
 	/*
 	If ELSA is enabled, then we need to:
