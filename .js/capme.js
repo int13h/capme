@@ -36,7 +36,7 @@ $(document).ready(function(){
  
     $(".capme_submit").click(function() {
        frmArgs = $('input[value!=""]').length;
-       if (frmArgs == 11) {
+       if (frmArgs == 12) {
             reqCap("usefrm");
         } else {
             theMsg("Please complete all form fields");

@@ -4,7 +4,7 @@ include '.inc/functions.php';
 $s = 0;
 
 // Argument defaults
-$sip = $spt = $dip = $dpt = $stime = $etime = $usr = $pwd = $sancp = $event = '';
+$sip = $spt = $dip = $dpt = $stime = $etime = $usr = $pwd = $sancp = $event = $elsa = '';
 // Grab any arguments provided in URI
 if (isset($_REQUEST['sip']))      { $sip    = $_REQUEST['sip'];      $s++; }
 if (isset($_REQUEST['spt']))      { $spt    = $_REQUEST['spt'];      $s++; }
@@ -14,8 +14,15 @@ if (isset($_REQUEST['stime']))    { $stime  = $_REQUEST['stime'];    $s++; }
 if (isset($_REQUEST['etime']))    { $etime  = $_REQUEST['etime'];    $s++; }
 if (isset($_REQUEST['user']))     { $usr    = $_REQUEST['user'];     $s++; }
 if (isset($_REQUEST['password'])) { $pwd    = $_REQUEST['password']; $s++; }
+// If we see a filename parameter, we know the request came from Snorby
+// and if so we can just query the event table since Snorby just has NIDS alerts
+// If the referer contains ":3154", then it's most likely a Security Onion user 
+// pivoting from ELSA, so we should query using ELSA.
+// If all else fails, query sancp.
 if (isset($_REQUEST['filename'])) { 
     $event = " checked";
+} elseif (strpos($_SERVER['HTTP_REFERER'],":3154") !== false) {
+    $elsa  = " checked";
 } else {
     $sancp = " checked";
 }
@@ -87,6 +94,7 @@ capME!
 <td class=capme_right>
 <input type=radio name=sidsrc class=capme_rad value="sancp"<?php echo $sancp;?>>sancp
 <input type=radio name=sidsrc class=capme_rad value="event"<?php echo $event;?>>event
+<input type=radio name=sidsrc class=capme_rad value="elsa"<?php echo $elsa;?>>elsa
 </td>
 </tr>
 
