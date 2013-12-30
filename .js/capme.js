@@ -36,7 +36,7 @@ $(document).ready(function(){
  
     $(".capme_submit").click(function() {
        frmArgs = $('input[value!=""]').length;
-       if (frmArgs == 12) {
+       if (frmArgs == 15) {
             reqCap("usefrm");
         } else {
             theMsg("Please complete all form fields");
@@ -50,6 +50,9 @@ $(document).ready(function(){
 
             bOFF('.capme_submit');
             theMsg("Sending request..");
+
+            // Transcript
+            var xscript = s2h($('input:radio[name=xscript]:checked').val());
 
             // SID Source
             var sidsrc = s2h($('input:radio[name=sidsrc]:checked').val());
@@ -88,7 +91,7 @@ $(document).ready(function(){
             // Continue if no errors
             if (err == 0) {
             
-                var urArgs = "d=" + sip + "-" + spt + "-" + dip + "-" + dpt + "-" + st + "-" + et + "-" + usr + "-" + pwd + "-" + sidsrc;
+                var urArgs = "d=" + sip + "-" + spt + "-" + dip + "-" + dpt + "-" + st + "-" + et + "-" + usr + "-" + pwd + "-" + sidsrc + "-" + xscript;
 
                 $(function(){
                     $.get(".inc/callback.php?" + urArgs, function(data){cbtx(data)});
@@ -110,7 +113,9 @@ $(document).ready(function(){
                         txt += "</td></tr>";
                         txt += "<tr>";
                         txt += "<td class=capme_text>";
-                        txt += txResult;
+			if (txResult.indexOf("OS Fingerprint:") >= 0) {
+				txt += txResult;
+			}
                         txt += txDebug;
                         txt += txError;
                         txt += "</td></tr></table>";
@@ -119,6 +124,10 @@ $(document).ready(function(){
                         $(".capme_div").hide();
                         $(".capme_result").show();
                         $(".capme_msg").fadeOut('slow');
+			if (txResult.indexOf("OS Fingerprint:") == -1) {
+				url = "/capme/pcap/" + txResult;
+				window.open(url, "_self");
+			}
                     } else {
                         theMsg(txError);
                     }

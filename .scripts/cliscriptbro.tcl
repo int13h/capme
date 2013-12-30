@@ -278,7 +278,7 @@ if { $authResults == "INVALID" } {
 }
 
 # Send info to Sguild
-SendToSguild $socketID [list CliScript $eventInfo]
+SendToSguild $socketID [list CliScriptBro $eventInfo]
 
 set SESSION_STATE DEBUG
 

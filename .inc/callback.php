@@ -19,10 +19,28 @@ $et_unix= $d[5];
 $usr	= h2s($d[6]);
 $pwd	= h2s($d[7]);
 $sidsrc = h2s($d[8]);
+$xscript = h2s($d[9]);
 
 // Format timestamps
 $st = date("Y-m-d H:i:s", $st_unix);
 $et = date("Y-m-d H:i:s", $et_unix);
+
+// Fix Snorby timezone
+if ($sidsrc == "event") {
+
+	// load the user's timezone setting
+	include 'timezone.php';
+
+	// convert the start time from the user's timezone to UTC/GMT
+	$st = date_create($st, timezone_open($timezone));
+	date_timezone_set($st, timezone_open('Etc/GMT'));
+	$st = date_format($st, 'Y-m-d H:i:s');
+
+	// convert the end time from the user's timezone to UTC/GMT
+	$et = date_create($et, timezone_open($timezone));
+	date_timezone_set($et, timezone_open('Etc/GMT'));
+	$et = date_format($et, 'Y-m-d H:i:s');
+}
 
 // Defaults
 $err = 0;
@@ -46,7 +64,7 @@ if ($sidsrc == "elsa") {
 	has been extended to include the sensor name (HOSTNAME-INTERFACE).
 	*/
 
-	$elsa_query = "class=bro_conn start:'$st_unix' end:'$et_unix' +$sip +$spt +$dip +$dpt limit:1";
+	$elsa_query = "class=bro_conn start:'$st_unix' end:'$et_unix' +$sip +$spt +$dip +$dpt limit:1 timeout:0";
 	$elsa_command = "perl /opt/elsa/web/cli.pl -q '$elsa_query' ";
 	$elsa_response = shell_exec($elsa_command);
 
@@ -128,12 +146,60 @@ if ($err == 1) {
 
 } else {
 
-    // We have all the data we need, so pass the parameters to cliscript
-    $cmd = "cliscript.tcl -sid $sid -sensor '$sensor' -timestamp '$st' -u '$usr' -pw '$pwd' -sip $sip -spt $spt -dip $dip -dpt $dpt";
+    // We have all the data we need, so pass the parameters to the correct cliscript
+    $script = "cliscript.tcl";
+    if ($xscript == "bro") {
+	$script = "cliscriptbro.tcl";
+    }
+    $cmd = "$script -sid $sid -sensor '$sensor' -timestamp '$st' -u '$usr' -pw '$pwd' -sip $sip -spt $spt -dip $dip -dpt $dpt";
 
     exec("../.scripts/$cmd",$raw);
 
+$found_pcap = 0;
+
     foreach ($raw as $line) {
+
+	/*
+	$DEBUG either looks like this:
+
+	DEBUG: Using archived data: /nsm/server_data/securityonion/archive/2013-11-08/doug-virtual-machine-eth1/10.0.2.15:1066_192.168.56.50:80-6.raw
+
+	OR it looks like this:
+
+	DEBUG: Raw data request sent to doug-virtual-machine-eth1.
+	DEBUG: Making a list of local log files.
+	DEBUG: Looking in /nsm/sensor_data/doug-virtual-machine-eth1/dailylogs/2013-11-08.
+	DEBUG: Making a list of local log files in /nsm/sensor_data/doug-virtual-machine-eth1/dailylogs/2013-11-08.
+	DEBUG: Available log files:
+	DEBUG: 1383910121
+	DEBUG: Creating unique data file: /usr/sbin/tcpdump -r /nsm/sensor_data/doug-virtual-machine-eth1/dailylogs/2013-11-08/snort.log.1383910121 -w /tmp/10.0.2.15:1066_192.168.56.50:80-6.raw (ip and host 10.0.2.15 and host 192.168.56.50 and port 1066 and port 80 and proto 6) or (vlan and host 10.0.2.15 and host 192.168.56.50 and port 1066 and port 80 and proto 6)
+	DEBUG: Receiving raw file from sensor.
+	*/
+
+	$archive = 'Using archived data:';
+	$pos = strpos($line, $archive);
+	if ($pos !== false) {
+		$found_pcap = 1;
+		$pieces = explode(" ", $line);
+		$full_filename = $pieces[4];
+		$pieces = explode("/", $full_filename);
+		$filename = $pieces[7];
+	}
+
+	$unique = 'Creating unique data file:';
+	$pos = strpos($line, $unique);
+	if ($pos !== false) {
+		$found_pcap = 1;
+		$pieces = explode(" ", $line);
+		$sensor_filename = $pieces[7];
+		$server_filename = $pieces[9];
+		$pieces = explode("/", $sensor_filename);
+		$sensorname = $pieces[3];
+		$dailylog = $pieces[5];
+		$pieces = explode("/", $server_filename);
+		$filename = $pieces[2];
+		$full_filename = "/nsm/server_data/securityonion/archive/$dailylog/$sensorname/$filename";
+	}	
 
         $line = htmlspecialchars($line);
         $type = substr($line, 0,3);
@@ -142,7 +208,7 @@ if ($err == 1) {
             case "DEB": $debug .= preg_replace('/^DEBUG:.*$/', "<span class=txtext_dbg>$0</span>", $line) . "<br>"; $line = ''; break;
             case "HDR": $line = preg_replace('/(^HDR:)(.*$)/', "<span class=txtext_hdr>$2</span>", $line); break;
             case "DST": $line = preg_replace('/^DST:.*$/', "<span class=txtext_dst>$0</span>", $line); break;
-            case "SRC": $line = preg_replace('/^SRC:.*$/', "<span class=txtext_src>$0</span>", $line); break;       
+            case "SRC": $line = preg_replace('/^SRC:.*$/', "<span class=txtext_src>$0</span>", $line); break;
         }
 
         if (strlen($line) > 0) {
@@ -150,11 +216,22 @@ if ($err == 1) {
         }
     }
 
+    $tmpstring = rand();
+    $filename_random = str_replace(".raw", "", "$filename-$tmpstring");
+    $filename_download = "$filename_random.pcap";
+    $link = "/var/www/capme/pcap/$filename_download";
+    symlink($full_filename, $link);
+	
     // Add query to debug
     $debug .= "<span class=txtext_qry>QUERY: " . $queries[$sidsrc] . "</span>";
 
-    $result = array("tx"  => "$fmtd",
-                    "dbg" => "$debug",
+    $mytx = $fmtd;
+    if ($xscript == "pcap") {
+    	$mytx = $filename_download;
+    }
+
+    $result = array("tx"  => "$mytx",
+                    "dbg" => "$debug<br><a href=\"/capme/pcap/$filename_download\">$filename_download</a>",
                     "err" => "$errMsg");
 }
 
