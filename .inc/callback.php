@@ -155,51 +155,7 @@ if ($err == 1) {
 
     exec("../.scripts/$cmd",$raw);
 
-$found_pcap = 0;
-
     foreach ($raw as $line) {
-
-	/*
-	$DEBUG either looks like this:
-
-	DEBUG: Using archived data: /nsm/server_data/securityonion/archive/2013-11-08/doug-virtual-machine-eth1/10.0.2.15:1066_192.168.56.50:80-6.raw
-
-	OR it looks like this:
-
-	DEBUG: Raw data request sent to doug-virtual-machine-eth1.
-	DEBUG: Making a list of local log files.
-	DEBUG: Looking in /nsm/sensor_data/doug-virtual-machine-eth1/dailylogs/2013-11-08.
-	DEBUG: Making a list of local log files in /nsm/sensor_data/doug-virtual-machine-eth1/dailylogs/2013-11-08.
-	DEBUG: Available log files:
-	DEBUG: 1383910121
-	DEBUG: Creating unique data file: /usr/sbin/tcpdump -r /nsm/sensor_data/doug-virtual-machine-eth1/dailylogs/2013-11-08/snort.log.1383910121 -w /tmp/10.0.2.15:1066_192.168.56.50:80-6.raw (ip and host 10.0.2.15 and host 192.168.56.50 and port 1066 and port 80 and proto 6) or (vlan and host 10.0.2.15 and host 192.168.56.50 and port 1066 and port 80 and proto 6)
-	DEBUG: Receiving raw file from sensor.
-	*/
-
-	$archive = 'Using archived data:';
-	$pos = strpos($line, $archive);
-	if ($pos !== false) {
-		$found_pcap = 1;
-		$pieces = explode(" ", $line);
-		$full_filename = $pieces[4];
-		$pieces = explode("/", $full_filename);
-		$filename = $pieces[7];
-	}
-
-	$unique = 'Creating unique data file:';
-	$pos = strpos($line, $unique);
-	if ($pos !== false) {
-		$found_pcap = 1;
-		$pieces = explode(" ", $line);
-		$sensor_filename = $pieces[7];
-		$server_filename = $pieces[9];
-		$pieces = explode("/", $sensor_filename);
-		$sensorname = $pieces[3];
-		$dailylog = $pieces[5];
-		$pieces = explode("/", $server_filename);
-		$filename = $pieces[2];
-		$full_filename = "/nsm/server_data/securityonion/archive/$dailylog/$sensorname/$filename";
-	}	
 
         $line = htmlspecialchars($line);
         $type = substr($line, 0,3);
@@ -216,22 +172,74 @@ $found_pcap = 0;
         }
     }
 
-    $tmpstring = rand();
-    $filename_random = str_replace(".raw", "", "$filename-$tmpstring");
-    $filename_download = "$filename_random.pcap";
-    $link = "/var/www/capme/pcap/$filename_download";
-    symlink($full_filename, $link);
-	
+    // default to sending transcript
+    $mytx = $fmtd;
+
+    /*
+    $debug EITHER looks like this:
+
+    DEBUG: Using archived data: /nsm/server_data/securityonion/archive/2013-11-08/doug-virtual-machine-eth1/10.0.2.15:1066_192.168.56.50:80-6.raw
+
+    OR it looks like this:
+
+    DEBUG: Raw data request sent to doug-virtual-machine-eth1.
+    DEBUG: Making a list of local log files.
+    DEBUG: Looking in /nsm/sensor_data/doug-virtual-machine-eth1/dailylogs/2013-11-08.
+    DEBUG: Making a list of local log files in /nsm/sensor_data/doug-virtual-machine-eth1/dailylogs/2013-11-08.
+    DEBUG: Available log files:
+    DEBUG: 1383910121
+    DEBUG: Creating unique data file: /usr/sbin/tcpdump -r /nsm/sensor_data/doug-virtual-machine-eth1/dailylogs/2013-11-08/snort.log.1383910121 -w /tmp/10.0.2.15:1066_192.168.56.50:80-6.raw (ip and host 10.0.2.15 and host 192.168.56.50 and port 1066 and port 80 and proto 6) or (vlan and host 10.0.2.15 and host 192.168.56.50 and port 1066 and port 80 and proto 6)
+    DEBUG: Receiving raw file from sensor.
+    */
+
+    // Find pcap
+    $archive = '/DEBUG: Using archived data.*/';
+    $unique = '/DEBUG: Creating unique data file.*/';
+    $found_pcap = 0;
+    if (preg_match($archive, $debug, $matches)) {
+    	$found_pcap = 1;
+	$match = str_replace("</span><br>", "", $matches[0]);
+    	$pieces = explode(" ", $match);
+    	$full_filename = $pieces[4];
+    	$pieces = explode("/", $full_filename);
+    	$filename = $pieces[7];
+    } else if (preg_match($unique, $debug, $matches)) {
+    	$found_pcap = 1;
+	$match = str_replace("</span><br>", "", $matches[0]);
+    	$pieces = explode(" ", $match);
+    	$sensor_filename = $pieces[7];
+    	$server_filename = $pieces[9];
+    	$pieces = explode("/", $sensor_filename);
+    	$sensorname = $pieces[3];
+    	$dailylog = $pieces[5];
+    	$pieces = explode("/", $server_filename);
+    	$filename = $pieces[2];
+    	$full_filename = "/nsm/server_data/securityonion/archive/$dailylog/$sensorname/$filename";
+    }	
+
     // Add query to debug
     $debug .= "<span class=txtext_qry>QUERY: " . $queries[$sidsrc] . "</span>";
 
-    $mytx = $fmtd;
-    if ($xscript == "pcap") {
-    	$mytx = $filename_download;
+    // if we found the pcap, create a symlink in /var/www/capme/pcap/
+    // and then create a hyperlink to that symlink
+    if ($found_pcap == 1) {
+      	$tmpstring = rand();
+	$filename_random = str_replace(".raw", "", "$filename-$tmpstring");
+	$filename_download = "$filename_random.pcap";
+	$link = "/var/www/capme/pcap/$filename_download";
+	symlink($full_filename, $link);
+	$debug .= "<br><a href=\"/capme/pcap/$filename_download\">$filename_download</a>";
+	$mytx = "<a href=\"/capme/pcap/$filename_download\">$filename_download</a><br><br>$mytx";
+	// if the user requested pcap, send the pcap instead of the transcript
+	if ($xscript == "pcap") {
+	    	$mytx = $filename_download;
+	}
+    } else {
+        $debug .= "<br>WARNING: Unable to find pcap.";
     }
 
     $result = array("tx"  => "$mytx",
-                    "dbg" => "$debug<br><a href=\"/capme/pcap/$filename_download\">$filename_download</a>",
+                    "dbg" => "$debug",
                     "err" => "$errMsg");
 }
 
