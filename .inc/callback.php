@@ -129,6 +129,10 @@ if (!$response) {
     $err = 1;
     $debug = $queries[$sidsrc];
     $errMsg = "Failed to find a matching sid, please try again in a few seconds";
+    $response = mysql_query("select * from sensor where agent_type='pcap' and active='Y';");
+    if (mysql_num_rows($response) == 0) {
+    $errMsg = "Error: No pcap_agent found";
+    }
 } else {
     $row = mysql_fetch_assoc($response);
     // If using ELSA, we already set $st and $sensor above so don't overwrite that here
