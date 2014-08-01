@@ -74,7 +74,21 @@ if ($sidsrc == "elsa") {
 
 	// Explode the output into separate lines and pull out the data line
 	$pieces = explode("\n", $elsa_response);
-	$elsa_response_data = $pieces[1];
+
+	// Sometimes the response contains a warning - this means that the
+	// expected query response data is not located on the second line.
+	// Iterate through until we find the header line - the next
+	// line is the data line we want. See line 35 of /opt/elsa/web/cli.pl
+	$data_line_n = 1;
+
+	for ($n=0; $n<=count($pieces); $n++) {
+		if ($pieces[$n] === "timestamp\tclass\thost\tprogram\tmsg\tfields") {
+			$data_line_n = $n + 1;
+			break;
+		}
+	}
+
+	$elsa_response_data = $pieces[$data_line_n];
 
 	// Explode the tab-delimited data line and pull out the pipe-delimited raw log
 	$pieces = explode("\t", $elsa_response_data);
