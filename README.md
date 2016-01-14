@@ -2,6 +2,12 @@
 
 Easy bake oven for sguil transcripts
 
+## Note
+
+This project is no longer maintained by me and has been forked and patched for use with
+Security Onion. You can find the repo [here](https://github.com/Security-Onion-Solutions/securityonion-capme)
+
+
 ## Provides
 
 * cliscript.tcl which can be used from the command line to generate a transcript
