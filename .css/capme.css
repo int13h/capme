@@ -185,11 +185,11 @@ span.capme_close:hover {
 }
 
 .txtext_src {
-  color: #ff0000;
+  color: #0000ff;
 }
 
 .txtext_dst {
-  color: #0000ff;
+  color: #ff0000;
 }
 
 .txtext_dbg {
